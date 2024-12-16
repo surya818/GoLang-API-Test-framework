@@ -1,0 +1,52 @@
+name: Test Kong Control Plane
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-app:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Go
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.20  # Update to your Go version
+
+    # Step 3: Set up Docker
+    - name: Ensure Docker is running
+      run: |
+        sudo systemctl start docker
+        docker --version
+
+    # Step 4: Build and start the application
+    - name: Build and start application
+      run: make docker-run &
+
+    # Step 5: Wait for the app to start on port 18080
+    - name: Wait for the app to start on port 18080
+      run: |
+        for i in {1..10}; do
+          if nc -zv localhost 18080; then
+            echo "Application is running on port 18080"
+            exit 0
+          fi
+          echo "Waiting for application to start..."
+          sleep 5
+        done
+        echo "Application failed to start on port 18080"
+        exit 1
+
+    # Step 6: Run Go tests
+    - name: Run tests
+      run: go test ./... -v

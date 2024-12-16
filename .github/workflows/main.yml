@@ -41,13 +41,13 @@ jobs:
     # Step 7: Wait for the app to start on port 18080
     - name: Wait for the app to start on port 18080
       run: |
-        for i in {1..10}; do
+        for i in {1..20}; do
           if nc -zv localhost 18080; then
             echo "Application is running on port 18080"
             exit 0
           fi
           echo "Waiting for application to start..."
-          sleep 5
+          sleep 10
         done
         echo "Application failed to start on port 18080"
         exit 1

@@ -1,0 +1,5 @@
+jwt_secret: kong
+jwt_token_timeout: 5m
+username: kong
+password: onward
+request_timeout: 5s

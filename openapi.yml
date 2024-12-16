@@ -1,0 +1,463 @@
+# Copyright © 2024 Kong Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+openapi: 3.0.3
+info:
+  title: Service Catalog API
+  description: API for managing services and service versions in a service catalog.
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Credentials:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username for authentication
+        password:
+          type: string
+          description: Password for authentication
+      required:
+        - username
+        - password
+
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token for authenticated requests
+      required:
+        - token
+
+    Service:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the service
+        name:
+          type: string
+          description: Name of the service
+          maxLength: 64
+        description:
+          type: string
+          description: Description of the service
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the service was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the service was last updated
+      required:
+        - id
+        - name
+
+    ServiceVersion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the service version
+        service_id:
+          type: string
+          format: uuid
+          description: ID of the service that this version belongs to
+        version:
+          type: string
+          description: Version information for the service
+          maxLength: 16
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the service version was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the service version was last updated
+      required:
+        - id
+        - service_id
+        - version
+
+security:
+  - BearerAuth: []
+
+paths:
+  /v1/token:
+    post:
+      summary: Generate JWT Token
+      description: Generate a JWT token for accessing authenticated endpoints.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: Token generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Invalid username or password
+
+  /v1/services:
+    get:
+      summary: Get all services
+      description: Retrieve a list of all services in the catalog.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            description: Page number for pagination
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            description: Number of results per page
+      responses:
+        '200':
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Service'
+        '400':
+          description: Invalid pagination parameters
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Create a new service
+      description: Add a new service to the catalog.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '201':
+          description: Service created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/Service'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+
+  /v1/services/{serviceId}:
+    get:
+      summary: Get a service
+      description: Retrieve details of a specific service by ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+      responses:
+        '200':
+          description: Service details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service not found
+
+    patch:
+      summary: Partially update a service
+      description: Partially update details of an existing service.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '200':
+          description: Service partially updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/Service'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service not found
+
+    delete:
+      summary: Delete a service
+      description: Delete a service from the catalog by its ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+      responses:
+        '204':
+          description: Service deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service not found
+
+  /v1/services/{serviceId}/versions:
+    get:
+      summary: Get service versions
+      description: Retrieve all versions of a specific service.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            description: Page number for pagination
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            description: Number of results per page
+      responses:
+        '200':
+          description: List of service versions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceVersion'
+        '400':
+          description: Invalid pagination parameters
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service not found
+
+    post:
+      summary: Create a service version
+      description: Add a new version to a specific service.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceVersion'
+      responses:
+        '201':
+          description: Service version created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/ServiceVersion'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service not found
+
+  /v1/services/{serviceId}/versions/{versionId}:
+    get:
+      summary: Get a service version
+      description: Retrieve details of a specific service version by ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+        - name: versionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service version
+      responses:
+        '200':
+          description: Service version details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceVersion'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service version not found
+
+    patch:
+      summary: Partially update a service service
+      description: Partially update details of an existing service version.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+        - name: versionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service version
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceVersion'
+      responses:
+        '200':
+          description: Service version updated successfully
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service version not found
+
+    delete:
+      summary: Delete a service version
+      description: Delete a specific version of a service.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service
+        - name: versionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Unique identifier for the service version
+      responses:
+        '204':
+          description: Service version deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Service version not found

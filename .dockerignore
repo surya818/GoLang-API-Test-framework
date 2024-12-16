@@ -1,0 +1,6 @@
+.vscode
+bin
+docs
+
+.gitignore
+candidate-take-home-exercise-sdet.db

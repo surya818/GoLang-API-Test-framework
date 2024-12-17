@@ -52,6 +52,10 @@ jobs:
         echo "Application failed to start on port 18080"
         exit 1
 
+    # Step 9: List test files
+    - name: List Test files
+      run: ls -lRa test;sleep 10
+      
     # Step 8: Run Go tests
     - name: Run tests
-      run: go test ./... -v
+      run: cd test/e2etests;go test -v

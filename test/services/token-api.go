@@ -35,3 +35,12 @@ func (s *TokensService) CreateToken(req server.Credentials) (http.Response, fram
 	return *resp, err
 
 }
+
+func (s *TokensService) FetchToken(username string, password string) string {
+
+	var creds = server.Credentials{Username: username, Password: password}
+	resp, _ := s.CreateToken(creds)
+	token, _ := framework.ParseResponseBody[server.TokenResponse](resp.Body)
+	return token.Token
+
+}

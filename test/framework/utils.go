@@ -6,12 +6,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/kong/candidate-take-home-exercise-sdet/internal/config"
+	"github.com/kong/candidate-take-home-exercise-sdet/internal/server"
 	"github.com/kong/candidate-take-home-exercise-sdet/test/models"
 	"gopkg.in/yaml.v3"
 )
@@ -126,4 +129,35 @@ func TokenHasUsernameClaim(tokenString string, expectedUsername string) (bool, e
 
 	// Return false if the token is invalid or the username does not match
 	return false, nil
+}
+
+func GetRandomNumber() string {
+	rand.Seed(time.Now().UnixNano())         // Seed the random number generator
+	randomNumber := rand.Intn(90000) + 10000 // Ensure the number is 5 digits (10000–99999)
+	return fmt.Sprintf("%05d", randomNumber) // Format as a 5-digit string
+}
+
+func GetRandomName(prefix string) string {
+	suffix := GetRandomNumber()
+	return prefix + "-" + suffix
+}
+
+func CreateCredentialsReqBody(username string, password string) server.Credentials {
+	creds := server.Credentials{Username: username, Password: password}
+	return creds
+}
+
+func CreateCustomCredentialsReqBody(username string, password string) server.Credentials {
+	creds := server.Credentials{Username: username, Password: password}
+	return creds
+}
+
+func CreateServicePayload(id string, name string, description string) models.Service {
+
+	if description == "" {
+		description = "newly created service"
+	}
+
+	service := models.Service{ID: id, Name: name, Description: description}
+	return service
 }

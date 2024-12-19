@@ -55,7 +55,20 @@ jobs:
     # Step 9: List test files
     - name: List Test files
       run: ls -lRa test;sleep 10
+
+    - name: Install Dependencies
+      run: go mod tidy
+
+    - name: Install gotestsum
+      run: go install gotest.tools/gotestsum@latest
       
-    # Step 8: Run Go tests
-    - name: Run tests
-      run: cd test/e2etests;go test -v
+    - name: Run Tests and Generate JUnit Report
+      run: |
+        mkdir -p test-reports
+        gotestsum --junitfile=test-reports/junit.xml
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: junit-test-report
+        path: test-reports/junit.xml      

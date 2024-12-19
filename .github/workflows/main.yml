@@ -73,10 +73,12 @@ jobs:
         go test -json ./... > test_results.json
 
     - name: Convert JSON to JUnit XML
+      if: always()
       run: |
         cat test_results.json | go-junit-report > junit_report.xml
 
     - name: Generate HTML report from JUnit XML
+      if: always()
       run: |
         jest-html-reporter --testResultsFile=junit_report.xml --outputPath=report.html
 

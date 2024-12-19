@@ -18,9 +18,10 @@ type ServiceApi struct {
 
 func NewServiceApi(client framework.Client, baseUrl string, token string) *ServiceApi {
 	return &ServiceApi{
-		Client:  client,
-		BaseURL: baseUrl,
-		Logger:  zap.Logger{},
+		Client:    client,
+		BaseURL:   baseUrl,
+		Logger:    zap.Logger{},
+		AuthToken: token,
 	}
 }
 

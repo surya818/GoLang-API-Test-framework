@@ -137,6 +137,16 @@ func GetRandomNumber() string {
 	return fmt.Sprintf("%05d", randomNumber) // Format as a 5-digit string
 }
 
+func RandomString(n int) string {
+	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	rand.Seed(time.Now().UnixNano()) // Seed the random number generator
+	result := make([]byte, n)
+	for i := range result {
+		result[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(result)
+}
+
 func GetRandomName(prefix string) string {
 	suffix := GetRandomNumber()
 	return prefix + "-" + suffix
@@ -160,4 +170,19 @@ func CreateServicePayload(id string, name string, description string) models.Ser
 
 	service := models.Service{ID: id, Name: name, Description: description}
 	return service
+}
+
+func CreateServiceVersionPayload(serviceId string, id string, version string) models.ServiceVersion {
+
+	num := GetRandomNumber()
+	if version == "" {
+		version = "v" + num
+	}
+
+	if id == "" {
+		id = "id-" + num
+	}
+
+	serviceVersion := models.ServiceVersion{ServiceID: serviceId, ID: id, Version: version}
+	return serviceVersion
 }

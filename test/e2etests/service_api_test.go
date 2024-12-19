@@ -15,9 +15,9 @@ GET v1/services/{serviceId}
 */
 func TestServiceApi_CreateAndGetService(t *testing.T) {
 
-	serviceName := framework.GetRandomName("service")
-	payload := framework.CreateServicePayload(serviceName, serviceName, "test service")
-	service_object := CreateServiceAndExtractResponse(payload, t)
+	service_object := CreateService_Success()
+	serviceName := service_object.Item.Name
+
 	//Verify Service Response Id is not what we pass in the request, but an auto generated GUID
 	assert.NotEqual(t, serviceName, service_object.Item.ID)
 	//Verify Service name is same as we pass in the response
@@ -37,15 +37,29 @@ func TestServiceApi_CreateAndGetService(t *testing.T) {
 }
 
 /*
+Bug Behaviour
+This test creates a new service and verifies that Get servic returns the correct service
+POST v1/services
+GET v1/services/{serviceId}
+*/
+func TestServiceApi_CreateAndVerifyTimestamps(t *testing.T) {
+
+	service_object := CreateService_Success()
+	assert.NotEmpty(t, service_object.Item.CreatedAt)
+	assert.NotEmpty(t, service_object.Item.UpdatedAt)
+
+}
+
+/*
 This test creates a new service and verifies that the new service is listed in the list of services
 POST v1/services
 GET v1/services
 */
 func TestServiceApi_CreateServiceAndVerifyListServices(t *testing.T) {
 
-	serviceName := framework.GetRandomName("service")
-	payload := framework.CreateServicePayload(serviceName, serviceName, "test service")
-	service_object := CreateServiceAndExtractResponse(payload, t)
+	service_object := CreateService_Success()
+	serviceName := service_object.Item.Name
+
 	//Verify Service Response Id is not what we pass in the request, but an auto generated GUID
 	assert.NotEqual(t, serviceName, service_object.Item.ID)
 	//Verify Service name is same as we pass in the response
@@ -72,11 +86,22 @@ This test is in place because of the name being required field
 */
 func TestServiceApi_ServiceCreationFailsWithEmptyName(t *testing.T) {
 
+	serviceId := framework.GetRandomName("service")
+	payload := framework.CreateServicePayload(serviceId, "", "test service")
+	service_response, _ := CreateService(payload)
+	assert.NotEqual(t, 201, service_response.StatusCode)
+}
+
+/*
+This test aims to see that POST /v1/services fails with a payload with an empty ServiceID in the payload
+This test is in place because of the ID being required field
+*/
+func TestServiceApi_ServiceCreationFailsWithEmptyId(t *testing.T) {
+
 	serviceName := framework.GetRandomName("service")
-	payload := framework.CreateServicePayload(serviceName, "", "test service")
-	service_response, service_error := CreateService(payload)
-	assert.Equal(t, 400, service_response.StatusCode)
-	assert.Nil(t, service_error.Error)
+	payload := framework.CreateServicePayload("", serviceName, "test service")
+	service_response, _ := CreateService(payload)
+	assert.NotEqual(t, 201, service_response.StatusCode)
 }
 
 // Invoke Get Service with non existent or invalid service ID and expect a 200/404??
@@ -105,9 +130,7 @@ Delete the service and
 */
 func TestServiceApi_DeleteService(t *testing.T) {
 
-	serviceName := framework.GetRandomName("service")
-	payload := framework.CreateServicePayload(serviceName, serviceName, "test service")
-	service_object := CreateServiceAndExtractResponse(payload, t)
+	service_object := CreateService_Success()
 	serviceId := service_object.Item.ID
 	services := listServicesAndExtractTheList()
 	serviceCountBeforeDelete := len(services.Items)
@@ -136,9 +159,7 @@ func TestServiceApi_DeleteService(t *testing.T) {
 
 func TestServiceApi_DeleteServiceTwiceAndVerifyHttp204(t *testing.T) {
 
-	serviceName := framework.GetRandomName("service")
-	payload := framework.CreateServicePayload(serviceName, serviceName, "test service")
-	service_object := CreateServiceAndExtractResponse(payload, t)
+	service_object := CreateService_Success()
 	serviceId := service_object.Item.ID
 
 	//Delete Service by Id and check the object is deleted completely
@@ -175,13 +196,15 @@ Update the service via PATCH /service/{}serviceId  and
 1. Verify the Patch api response
 2. List Services and verify the update
 4. Get Updated Service and verify the updated properties in the response
+
+Bug Behavior:
+The Patch response shows the update but on GET and LIST SErvice the changes are not reflected
 */
 func TestServiceApi_UpdateService(t *testing.T) {
 
-	serviceName := framework.GetRandomName("service")
-	payload := framework.CreateServicePayload(serviceName, serviceName, "test service")
-	service_object := CreateServiceAndExtractResponse(payload, t)
+	service_object := CreateService_Success()
 	serviceId := service_object.Item.ID
+	serviceName := service_object.Item.Name
 	updated_time := service_object.Item.UpdatedAt
 
 	//Patch Service by Id

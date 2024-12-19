@@ -41,3 +41,19 @@ type ServiceResponse struct {
 type ListServices struct {
 	Items []Service `json:"items"`
 }
+
+type ListServiceVersions struct {
+	Items []ServiceVersion `json:"items"`
+}
+
+type ServiceVersion struct {
+	ID        string    `json:"id"`
+	ServiceID string    `json:"service_id"`
+	Version   string    `json:"version"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type ServiceVersionResponse struct {
+	Item ServiceVersion `json:"item"`
+}

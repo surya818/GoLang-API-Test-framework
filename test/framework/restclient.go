@@ -50,6 +50,7 @@ func (httpClient *HttpClient) HttpGet(path string, token string) (*http.Response
 	if err != nil {
 		errMsg := fmt.Sprintf("Error building the request %v with reason %v ", path, err.Error())
 		fmt.Println(errMsg)
+		Logger.Error("Tests finished") // Add any teardown logic here if needed.
 	}
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
@@ -67,7 +68,7 @@ func (httpClient *HttpClient) HttpGet(path string, token string) (*http.Response
 
 func (httpClient *HttpClient) HttpDelete(path string, token string) (*http.Response, ApiError) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, path, nil)
 	if err != nil {

@@ -57,18 +57,17 @@ jobs:
       run: ls -lRa test
       
     - name: Install go-junit-report
-      run: go install github.com/jstemmer/go-junit-report@latest
-
-    - name: Install JUnit-Report-Generator (for HTML)
-      run: |
-        npm install -g junit-report-generator      
+      run: go install github.com/jstemmer/go-junit-report@latest  
 
     - name: Install Dependencies
       run: go mod tidy
+    - name: Install go-junit-report
+      run: go install github.com/jstemmer/go-junit-report@latest
 
-    - name: Install gotestsum
-      run: go install gotest.tools/gotestsum@latest
-      
+    - name: Install npm dependencies (for HTML report)
+      run: |
+        npm install -g jest-html-reporter
+
     - name: Run tests and generate JSON report
       run: |
         go test -json ./... > test_results.json
@@ -79,18 +78,18 @@ jobs:
 
     - name: Generate HTML report from JUnit XML
       run: |
-        junit-report-generator junit_report.xml --output report.html
+        jest-html-reporter --testResultsFile=junit_report.xml --outputPath=report.html
 
     - name: Upload JUnit XML report as artifact
-      if: always()
+      if: always()  # Ensures the artifact is uploaded even if tests fail
       uses: actions/upload-artifact@v3
       with:
         name: junit-report
         path: junit_report.xml
 
     - name: Upload HTML report as artifact
-      if: always()    
+      if: always()  # Ensures the artifact is uploaded even if tests fail
       uses: actions/upload-artifact@v3
       with:
         name: html-test-report
-        path: report.html   
+        path: report.html

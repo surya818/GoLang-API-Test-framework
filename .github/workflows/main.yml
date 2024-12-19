@@ -68,6 +68,7 @@ jobs:
         gotestsum --junitfile=test-reports/junit.xml
 
     - name: Upload Test Report
+      if: always()
       uses: actions/upload-artifact@v3
       with:
         name: junit-test-report

@@ -75,7 +75,7 @@ jobs:
     - name: Generate HTML report from JUnit XML
       if: always()
       run: |
-        xunit-viewer --result=junit_report.xml --output=report.html
+        xunit-viewer --results=junit_report.xml --output=report.html
 
     - name: Upload JUnit XML report as artifact
       if: always()  # Ensures the artifact is uploaded even if tests fail

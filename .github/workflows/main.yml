@@ -57,16 +57,11 @@ jobs:
       run: ls -lRa test
       
     - name: Install go-junit-report
-      run: go install github.com/jstemmer/go-junit-report@latest  
-
-    - name: Install Dependencies
-      run: go mod tidy
-    - name: Install go-junit-report
       run: go install github.com/jstemmer/go-junit-report@latest
 
-    - name: Install npm dependencies (for HTML report)
+    - name: Install xunit-viewer (for HTML)
       run: |
-        npm install -g jest-html-reporter
+        npm install -g xunit-viewer
 
     - name: Run tests and generate JSON report
       run: |
@@ -80,7 +75,7 @@ jobs:
     - name: Generate HTML report from JUnit XML
       if: always()
       run: |
-        jest-html-reporter --testResultsFile=junit_report.xml --outputPath=report.html
+        xunit-viewer --result=junit_report.xml --output=report.html
 
     - name: Upload JUnit XML report as artifact
       if: always()  # Ensures the artifact is uploaded even if tests fail

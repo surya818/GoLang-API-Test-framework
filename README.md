@@ -1,133 +1,77 @@
 # Candidate Take-Home Exercise - SDET
+# Kong Gateway API Tests 
+Welcome to the Technical solution for the Candidate take home task for SDET
+This repository consists of Test Automation framework to testing APIs of the Service Catalog API developed in Go
 
-Welcome to the candidate take-home exercise for the SDET position. This challenge is designed to evaluate
-your technical skills, specifically focusing on testing, documentation, and evaluating an existing API.
-Below, you'll find all the relevant information to help you get started, including requirements, setup
-instructions, and guidelines for submission.
+**Tech Stack:**</br>
+go</br>
+Docker</br>
+****</br>
 
-## Table of Contents
-1. [Requirements for Candidates](#requirements-for-candidates)
-2. [Endpoints and Operations](#endpoints-and-operations)
-3. [OpenAPI Specification](#openapi-specification)
-4. [How to Run the Project](#how-to-run-the-project)
-5. [Configuration Options](#configuration-options)
-6. [Dependencies](#dependencies)
-7. [Submission Guidelines](#submission-guidelines)
-8. [Extra Credit - CI/CD Integration](#extra-credit---cicd-integration)
+**Prerequisites/Setup:**
+1. Go and Docker installed installed</br>
+2. gofumpt library instteled, which is a requirement for running the server in docker, via a make command 
 
-## Project Overview
-This is a service catalog API written in Go, using SQLite for persistence. It provides CRUD operations
-for services and their versions. The application is set up to run using Docker, allowing you to easily
-start the API and interact with it.
+**How to Run: Created a github action** </br>
 
-## Requirements for Candidates
+**How to Run: (on Local Machine, Docker )** </br>
+(If you want to just run the tests locally, using Docker) </br>
 
-1. **Create a README File**:
-   - Include instructions on how to execute and configure your **end-to-end tests**.
-     - Simplify this by using scripting mechanisms (e.g. bash, Makefile, ...etc).
+1. Clone this repo </br>
+2. Navigate to root directory of the repo </br>
+3. Run the command make docker-run to start the server
+4. Verify the server started on docker container and exposed on port 18080. Verify running curl or equivalent http://localhost:18080 for a 404 error
+6. For an easy to read HTML report , install the go library ==> ** go install github.com/vakenbolt/go-test-report@latest **
+6. Run ** go test -v -json ./... | go-test-report** </br>
+5. Verify Test results in test-report.html </br>
 
-2. **Write Tests**:
-   - Implement tests for all endpoints, including both normal and edge cases.
-   - Include **integration** and **end-to-end tests** as appropriate.
-   - Use `go test` or an equivalent test framework to execute your tests.
+ 
+**What's happening behind the scenes of Github action:**
+The Dockerfile uses a openjdk base image, which has java pre-built. </br>
+There is a script called runtests.sh, which is the entrypoint for the Dockerfile. This script setsup an openjdk baseimage in the container and also fire the test execution using a gradle command </br> 
+Our docker run command has a -v option, which creates a volume, and this is how we copy the test result reports to the host machine.Also it uses your host KONG_API_KEY environment veiable and pass it to docker container by -e option, which is needed to authenticate the kong API calls
 
-3. **Documentation**:
-   - Document your approach to testing, including a comprehensive **test plan** using the README.
-   - Summarize your **findings**, including any identified issues.
-   - Outline the **steps you would take to address these issues**.
-   - Document any **shortcuts** taken due to time constraints and the rationale behind them.
 
-4. **Extra Credit (Optional)**:
-   - Integrate CI/CD tools (e.g., GitHub Actions, Jenkins) to automate the testing process on each
-     commit.
+**Main Packages used:**</br>
+net/http --> For http client</br>
+zap --> For logging</br>
+testing --> For tests and for the assertions within</br>
 
-## Endpoints and Operations
 
-### Services Endpoints
-1. **`POST /v1/token`** - Generate a JWT token for authentication.
-2. **`GET /v1/services`** - List all services.
-3. **`POST /v1/services`** - Create a new service.
-4. **`GET /v1/services/{serviceId}`** - Retrieve details of a specific service.
-5. **`PATCH /v1/services/{serviceId}`** - Update an existing service.
-6. **`DELETE /v1/services/{serviceId}`** - Delete a specific service.
+Test Automation Architecture:
+The Test automation code consists of 3 parts
+1. Framework layer: Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
+2. Service Layer: This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
+3. Test Layer: This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area 
 
-### Service Versions Endpoints
-1. **`GET /v1/services/{serviceId}/versions`** - List all versions of a specific service.
-2. **`POST /v1/services/{serviceId}/versions`** - Create a new version for a specific service.
-3. **`GET /v1/services/{serviceId}/versions/{versionId}`** - Retrieve details of a specific service
-   version.
-4. **`PATCH /v1/services/{serviceId}/versions/{versionId}`** - Update an existing version.
-5. **`DELETE /v1/services/{serviceId}/versions/{versionId}`** - Delete a specific service version.
+Utils:
+Consists of utility code that could be used within tests or even service layer code that abstracts api supporting code. E.g, Parsing Http Response to strings and Generic structs, tokenizing JWT tokens and templating request payloads
 
-## OpenAPI Specification
-The OpenAPI Specification for this project is located at
-[./docs/openapi.html](./docs/openapi.html). It provides a detailed description of all the API
-endpoints, request/response structures, and authentication requirements.
+Configuration:
+Nothing is hard coded. Utilized existing configuration for some of the tests, by creating a Configuation object from the config.yml file. 
 
-## How to Run the Project
+Test Data:
+Again, no test data is hard coded. Everything is neatly randomized, using code in utils
 
-To run the project using Docker:
 
-1. **Run the Docker Container**:
-   ```
-   make docker-run
-   ```
-   This will build and start the application on port **18080**. You can interact with the API at
-   `http://localhost:18080`.
+<h3>**Test Details:**</h3>
+The tests focus on Kong Gateway functionality. In a nutshell tests deal with creation, modification, deletion of Control Planes, Services and routes. We have tests covering some of the CRUD operations that the rest api offers. And the tests are accpetance tests integrating flows accross different operations of Kong Gateway.
+The Test scenarios covered via Test Automation:
+  
 
-### Example `curl` Commands
+**Successful Github Actions Run:** </br>
+![image](https://github.com/user-attachments/assets/00d2eab9-7e08-4990-8aee-f5da5faa5736)
 
-1. **Generate a JWT Token**:
-   ```sh
-   curl -X POST http://localhost:18080/v1/token \
-     -H "Content-Type: application/json" \
-     -d '{"username": "kong", "password": "onward"}'
-   ```
-   Expected Response:
-   ```json
-   {
-     "token": "<JWT_TOKEN>"
-   }
-   ```
 
-2. **List All Services** (Requires the Token from Step 1):
-   ```sh
-   curl -X GET http://localhost:18080/v1/services \
-     -H "Authorization: Bearer <JWT_TOKEN>"
-   ```
-   Replace `<JWT_TOKEN>` with the token obtained in the previous step.
+**Sample Test Reports:** </br>
 
-## Configuration Options
 
-The project uses a `config.yml` file with the following default options:
+****Sample Logging**:**</br>
 
-- **JWT Secret** (`jwt_secret`): Default is `"kong"`.
-  - **Note**: This is used to sign JWT tokens.
-- **Username** (`username`): Default is `"kong"`.
-- **Password** (`password`): Default is `"onward"`.
-- **JWT Token Timeout** (`jwt_token_timeout`): Default is `5m`.
-- **Request Timeout** (`request_timeout`): Default is `5s`.
 
-These can be configured by updating the `config.yml` file.
 
-## Dependencies
 
-To complete this exercise, you will need the following:
 
-1. **Docker**: To build and run the Docker container.
-2. **Go**: To run tests and work with Go modules.
 
-## Submission Guidelines
 
-1. **Create a Private GitHub Repository**:
-   - Create a private GitHub repository and push your changes.
-   - Add the GitHub handles provided by the recruiter as collaborators to give them access.
-
-2. **Submit Your Solution**:
-   - Include a README file with your approach, test plan, and findings.
-   - Your submission should include tests and any CI/CD integrations for extra credit.
-
----
-
-We hope you enjoy the challenge and look forward to reviewing your work. Good luck!
 # kong-takehometask

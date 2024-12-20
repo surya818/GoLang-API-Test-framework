@@ -11,11 +11,13 @@ This repository consists of Test Automation framework to testing APIs of the Ser
 
 **Prerequisites/Setup:**
 1. Go and Docker installed installed</br>
-2. gofumpt library instteled, which is a requirement for running the server in docker, via a make command 
+2. gofumpt package
 
 **How to Run: 
 Approach 1: Created a github action** </br>
-</br><img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="900" height="600">
+
+![image](https://github.com/user-attachments/assets/ef69500e-4e4b-435a-8674-663a70d94c76)
+
 
 </br>**Approach 2: (on Local Machine, Docker )** </br>
 (If you want to just run the tests locally, using Docker) </br>
@@ -23,7 +25,7 @@ Approach 1: Created a github action** </br>
 1. Clone this repo </br>
 2. Navigate to root directory of the repo </br>
 3. Run the command make docker-run to start the server
-4. Verify the server started on docker container and exposed on port 18080. Verify running curl or equivalent http://localhost:18080 for a 404 error
+4. Verify the server started on docker container and exposed on port 18080. Verify running curl or equivalent http://localhost:18080 for a 404 response
 6. For an easy to read HTML report , install the go library ==> ** go install github.com/vakenbolt/go-test-report@latest **
 6. Run ** go test -v -json ./... | go-test-report** </br>
 5. Verify Test results in test-report.html </br>

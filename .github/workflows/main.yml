@@ -55,38 +55,16 @@ jobs:
     # Step 9: List test files
     - name: List Test files
       run: ls -lRa test
+
       
-    - name: Install go-junit-report
-      run: go install github.com/jstemmer/go-junit-report@latest
-
-    - name: Install xunit-viewer (for HTML)
-      run: |
-        npm install -g xunit-viewer
-
+    # Step 10: Run tests with go-test-report
     - name: Run tests and generate JSON report
       run: |
-        go test -json ./... > test_results.json
-
-    - name: Convert JSON to JUnit XML
-      if: always()
-      run: |
-        cat test_results.json | go-junit-report > junit_report.xml
-
-    - name: Generate HTML report from JUnit XML
-      if: always()
-      run: |
-        xunit-viewer --results=junit_report.xml --output=report.html
-
-    - name: Upload JUnit XML report as artifact
-      if: always()  # Ensures the artifact is uploaded even if tests fail
-      uses: actions/upload-artifact@v3
-      with:
-        name: junit-report
-        path: junit_report.xml
-
+        go test -json | go-test-report
+    # Step 11: Upload HTML report as artifact
     - name: Upload HTML report as artifact
       if: always()  # Ensures the artifact is uploaded even if tests fail
       uses: actions/upload-artifact@v3
       with:
         name: html-test-report
-        path: report.html
+        path: test_report.html      

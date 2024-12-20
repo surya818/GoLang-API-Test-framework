@@ -25,6 +25,8 @@ jobs:
     # Step 3: Install gofumpt and go-test-report
     - name: Install gofumpt
       run: go install mvdan.cc/gofumpt@latest
+    # Step 3-a: Install gofumpt and go-test-report
+    - name: Install go-test-report for HTML test reports
       run: go install github.com/vakenbolt/go-test-report@latest
       
    # Step 4: Add Go tools to PATH

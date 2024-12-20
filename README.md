@@ -67,9 +67,6 @@ Nothing is hard coded. Utilized existing configuration for some of the tests, by
 **Test Data:**
 Again, no test data is hard coded. Everything is neatly randomized, using code in utils
 
-**Logging:**
-Utmost care had been taken in logging everything concerning the api calls mode during the test. And majority of logging is written in the framework layer, which is reused accross Service and Test layer, reducing the number of log statements.
-
 **Overall Code structure:**
 
 ![image](https://github.com/user-attachments/assets/2d23de0f-64f6-423a-89e1-d6707e6658b8)
@@ -90,13 +87,11 @@ A common practice is to manually test the scenarios first and then plan the auto
 ![image](https://github.com/user-attachments/assets/a4260dbc-85a3-4dab-9d36-a92894c4ae45)
 
 
+**Logging:**
+Utmost care had been taken in logging everything concerning the api calls mode during the test. And majority of logging is written in the framework layer, which is reused across Service and Test layer, reducing the number of log statements in the code. One would establish a fair understanding of what's happening in the test by the sequence of log statements</br>
 
 ****Sample Logging**:**</br>
 ![image](https://github.com/user-attachments/assets/348b0d72-a29e-4952-928e-35b057c82941)
-
-
-
-
 
 
 

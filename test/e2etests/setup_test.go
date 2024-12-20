@@ -23,7 +23,8 @@ var (
 
 // Initialize sets up common test configurations.
 func Initialize() {
-	fmt.Println("Setting up tests...")
+	framework.InitLogger()
+	framework.Logger.Info("Setting up tests...")
 
 	// Common setup
 	baseUrl := "http://localhost:18080"
@@ -35,7 +36,7 @@ func Initialize() {
 	ServiceVersionApi = service.NewServiceVersionApi(Client, baseUrl, token)
 	err := framework.InitLogger()
 	if err != nil {
-		fmt.Printf("Failed to initialize logger: %v\n", err)
+		framework.Logger.Info(fmt.Sprintf("Failed to initialize logger: %v\n", err))
 	}
 }
 
@@ -151,9 +152,9 @@ func CreateService_Success() models.ServiceResponse {
 	serviceName := framework.GetRandomName("service")
 	payload := framework.CreateServicePayload(serviceName, serviceName, "test service")
 	service_resp, service_err := CreateService(payload)
-	fmt.Errorf("Error in creating Service: %v", service_err)
+	framework.Logger.Error(fmt.Sprintf("Error in creating Service: %v", service_err))
 	if service_resp.StatusCode != 201 {
-		fmt.Errorf("Error in creating Service: Status code is %v", service_resp.StatusCode)
+		framework.Logger.Error(fmt.Sprintf("Error in creating Service: Status code is %v", service_resp.StatusCode))
 		return models.ServiceResponse{}
 	}
 	service_object := extractServiceResponse(service_resp)
@@ -165,9 +166,9 @@ func CreateServiceVersion_Success() models.ServiceVersionResponse {
 	serviceId := service_object.Item.ID
 	payload := framework.CreateServiceVersionPayload(serviceId, "", "")
 	service_version_resp, service_err := ServiceVersionApi.CreateServiceVersion(serviceId, payload)
-	fmt.Errorf("Error in creating Service: %v", service_err)
+	framework.Logger.Error(fmt.Sprintf("Error in creating Service: %v", service_err))
 	if service_version_resp.StatusCode != 201 {
-		fmt.Errorf("Error in creating Service: Status code is %v", service_version_resp.StatusCode)
+		framework.Logger.Error(fmt.Sprintf("Error in creating Service: Status code is %v", service_version_resp.StatusCode))
 		return models.ServiceVersionResponse{}
 	}
 	service_version_object := extractServiceVersionResponse(service_version_resp)

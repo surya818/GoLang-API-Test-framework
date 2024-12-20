@@ -25,10 +25,10 @@ func NewTokensService(client framework.Client, baseUrl string) *TokensService {
 
 func (s *TokensService) CreateToken(req server.Credentials) (http.Response, framework.ApiError) {
 	url := s.BaseURL + "/v1/token"
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintf("Request URL " + url))
 	credentialsRequest, error := framework.StructToReader(req)
 	if error != nil {
-		fmt.Printf("Invalid request payload - %v", error)
+		framework.Logger.Error(fmt.Sprintf("Invalid request payload - %v", error))
 	}
 	resp, err := s.Client.HttpPost(url, "", credentialsRequest)
 

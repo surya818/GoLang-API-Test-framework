@@ -6,13 +6,11 @@ import (
 
 	"github.com/kong/candidate-take-home-exercise-sdet/test/framework"
 	"github.com/kong/candidate-take-home-exercise-sdet/test/models"
-	"go.uber.org/zap"
 )
 
 type ServiceApi struct {
 	Client    framework.Client
 	BaseURL   string
-	Logger    zap.Logger
 	AuthToken string
 }
 
@@ -20,17 +18,16 @@ func NewServiceApi(client framework.Client, baseUrl string, token string) *Servi
 	return &ServiceApi{
 		Client:    client,
 		BaseURL:   baseUrl,
-		Logger:    zap.Logger{},
 		AuthToken: token,
 	}
 }
 
 func (s *ServiceApi) CreateService(req models.Service) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services", s.BaseURL)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintln("Request URL " + url))
 	servicePayload, error := framework.StructToReader(req)
 	if error != nil {
-		fmt.Printf("Invalid request payload - %v", error)
+		framework.Logger.Info(fmt.Sprintf("Invalid request payload - %v", error))
 	}
 	resp, err := s.Client.HttpPost(url, s.AuthToken, servicePayload)
 
@@ -40,10 +37,10 @@ func (s *ServiceApi) CreateService(req models.Service) (http.Response, framework
 
 func (s *ServiceApi) UpdateService(serviceId string, req models.Service) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%v", s.BaseURL, serviceId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintf("Request URL " + url))
 	servicePayload, error := framework.StructToReader(req)
 	if error != nil {
-		fmt.Printf("Invalid request payload - %v", error)
+		framework.Logger.Info(fmt.Sprintf("Invalid request payload - %v", error))
 	}
 	resp, err := s.Client.HttpPatch(url, s.AuthToken, servicePayload)
 
@@ -53,7 +50,7 @@ func (s *ServiceApi) UpdateService(serviceId string, req models.Service) (http.R
 
 func (s *ServiceApi) GetService(serviceId string) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%s", s.BaseURL, serviceId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintln("Request URL " + url))
 	resp, err := s.Client.HttpGet(url, s.AuthToken)
 
 	return *resp, err
@@ -62,7 +59,7 @@ func (s *ServiceApi) GetService(serviceId string) (http.Response, framework.ApiE
 
 func (s *ServiceApi) DeleteService(serviceId string) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%s", s.BaseURL, serviceId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintln("Request URL " + url))
 	resp, err := s.Client.HttpDelete(url, s.AuthToken)
 
 	return *resp, err
@@ -71,7 +68,7 @@ func (s *ServiceApi) DeleteService(serviceId string) (http.Response, framework.A
 
 func (s *ServiceApi) ListServices() (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services", s.BaseURL)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintln("Request URL " + url))
 	resp, err := s.Client.HttpGet(url, s.AuthToken)
 
 	return *resp, err

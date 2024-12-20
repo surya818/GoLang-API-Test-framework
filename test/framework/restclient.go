@@ -49,18 +49,19 @@ func (httpClient *HttpClient) HttpGet(path string, token string) (*http.Response
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, path, nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("Error building the request %v with reason %v ", path, err.Error())
-		fmt.Println(errMsg)
+		Logger.Error(errMsg)
 		Logger.Error("Tests finished") // Add any teardown logic here if needed.
 	}
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
-	fmt.Printf("\nInvoking %v %v \n", req.Method, req.URL)
+	msg := fmt.Sprintf("Invoking %v %v ", req.Method, req.URL)
+	Logger.Info(msg)
 	resp, err := httpClient.HttpClient.Do(req)
 	apierror := ApiError{err, resp}
 	if err != nil {
 		errMsg := fmt.Sprintf("Error invoking the GET %v with reason %v ", path, err.Error())
-		fmt.Println(errMsg)
+		Logger.Error(errMsg)
 	}
 	logResponse(resp)
 	return resp, apierror
@@ -73,17 +74,17 @@ func (httpClient *HttpClient) HttpDelete(path string, token string) (*http.Respo
 	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, path, nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("Error building the request %v with reason %v ", path, err.Error())
-		fmt.Println(errMsg)
+		Logger.Error(fmt.Sprintln(errMsg))
 	}
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
-	fmt.Printf("\nInvoking %v %v \n", req.Method, req.URL)
+	Logger.Info(fmt.Sprintf("Invoking %v %v ", req.Method, req.URL))
 	resp, err := httpClient.HttpClient.Do(req)
 	apierror := ApiError{err, resp}
 	if err != nil {
 		errMsg := fmt.Sprintf("Error invoking the GET %v with reason %v ", path, err.Error())
-		fmt.Println(errMsg)
+		Logger.Error(errMsg)
 	}
 	logResponse(resp)
 	return resp, apierror
@@ -96,19 +97,19 @@ func (httpClient *HttpClient) HttpPost(path string, token string, payload io.Rea
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, path, payload)
 	if err != nil {
 		errMsg := fmt.Sprintf("Error building the request %v with reason %v ", path, err.Error())
-		fmt.Println(errMsg)
+		Logger.Error(errMsg)
 	}
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 	rc, _ := req.GetBody()
 	payloadvalue, _ := ReaderToString(rc)
-	fmt.Printf("\nInvoking %v %v \nPayload: %v", req.Method, req.URL, payloadvalue)
+	Logger.Info(fmt.Sprintf("Invoking %v %v Payload: %v", req.Method, req.URL, payloadvalue))
 	resp, err := httpClient.HttpClient.Do(req)
 	apierror := ApiError{err, resp}
 	if err != nil {
-		errMsg := fmt.Sprintf("\nError invoking the POST %v with reason %v \n", path, err.Error())
-		fmt.Println(errMsg)
+		errMsg := fmt.Sprintf("Error invoking the POST %v with reason %v ", path, err.Error())
+		Logger.Error(errMsg)
 	} else {
 		// Create a buffer to hold a copy of the response body
 		// Read the response body into bodyBuffer
@@ -128,19 +129,19 @@ func (httpClient *HttpClient) HttpPatch(path string, token string, payload io.Re
 	req, err := http.NewRequestWithContext(ctx, http.MethodPatch, path, payload)
 	if err != nil {
 		errMsg := fmt.Sprintf("Error building the request %v with reason %v ", path, err.Error())
-		fmt.Println(errMsg)
+		Logger.Error(errMsg)
 	}
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 	rc, _ := req.GetBody()
 	payloadvalue, _ := ReaderToString(rc)
-	fmt.Printf("\nInvoking %v %v \nPayload: %v", req.Method, req.URL, payloadvalue)
+	Logger.Info(fmt.Sprintf("Invoking %v %v Payload: %v", req.Method, req.URL, payloadvalue))
 	resp, err := httpClient.HttpClient.Do(req)
 	apierror := ApiError{err, resp}
 	if err != nil {
-		errMsg := fmt.Sprintf("\nError invoking the POST %v with reason %v \n", path, err.Error())
-		fmt.Println(errMsg)
+		errMsg := fmt.Sprintf("Error invoking the POST %v with reason %v ", path, err.Error())
+		Logger.Error(errMsg)
 	} else {
 		// Create a buffer to hold a copy of the response body
 		// Read the response body into bodyBuffer
@@ -154,18 +155,19 @@ func (httpClient *HttpClient) HttpPatch(path string, token string, payload io.Re
 }
 
 func logResponse(resp *http.Response) {
-	fmt.Printf("\nStatus Code: %v \n", resp.StatusCode)
+	Logger.Info(fmt.Sprintf("Status Code: %v ", resp.StatusCode))
 
 	var bodyBuffer bytes.Buffer
 
 	bodyContent, readerr := io.ReadAll(resp.Body)
 	if readerr != nil {
-		fmt.Printf("Error performing operation: %v", readerr)
+		msg := fmt.Sprintf("Error performing operation: %v", readerr)
+		Logger.Error(msg)
 	}
 
 	bodyBuffer.Write(bodyContent)
 
 	resp.Body = io.NopCloser(&bodyBuffer)
 
-	fmt.Println("Response Body \n", string(bodyContent))
+	Logger.Info(fmt.Sprintln("Response Body ", string(bodyContent)))
 }

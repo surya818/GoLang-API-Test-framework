@@ -27,10 +27,10 @@ func NewServiceVersionApi(client framework.Client, baseUrl string, token string)
 
 func (s *ServiceVersionApi) CreateServiceVersion(serviceId string, req models.ServiceVersion) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%v/versions", s.BaseURL, serviceId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintf("Request URL " + url))
 	serviceVersionPayload, error := framework.StructToReader(req)
 	if error != nil {
-		fmt.Printf("Invalid request payload - %v", error)
+		framework.Logger.Error(fmt.Sprintf("Invalid request payload - %v", error))
 	}
 	resp, err := s.Client.HttpPost(url, s.AuthToken, serviceVersionPayload)
 
@@ -40,10 +40,10 @@ func (s *ServiceVersionApi) CreateServiceVersion(serviceId string, req models.Se
 
 func (s *ServiceVersionApi) UpdateServiceVersion(serviceId string, versionId string, req models.ServiceVersion) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%v/versions/%v", s.BaseURL, serviceId, versionId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintf("Request URL " + url))
 	serviceVersionPayload, error := framework.StructToReader(req)
 	if error != nil {
-		fmt.Printf("Invalid request payload - %v", error)
+		framework.Logger.Error(fmt.Sprintf("Invalid request payload - %v", error))
 	}
 	resp, err := s.Client.HttpPatch(url, s.AuthToken, serviceVersionPayload)
 
@@ -53,7 +53,7 @@ func (s *ServiceVersionApi) UpdateServiceVersion(serviceId string, versionId str
 
 func (s *ServiceVersionApi) GetServiceVersion(serviceId string, versionId string) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%v/versions/%v", s.BaseURL, serviceId, versionId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintf("Request URL " + url))
 	resp, err := s.Client.HttpGet(url, s.AuthToken)
 
 	return *resp, err
@@ -62,7 +62,7 @@ func (s *ServiceVersionApi) GetServiceVersion(serviceId string, versionId string
 
 func (s *ServiceVersionApi) DeleteServiceVersion(serviceId string, versionId string) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%v/versions/%v", s.BaseURL, serviceId, versionId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintf("Request URL " + url))
 	resp, err := s.Client.HttpDelete(url, s.AuthToken)
 
 	return *resp, err
@@ -71,7 +71,7 @@ func (s *ServiceVersionApi) DeleteServiceVersion(serviceId string, versionId str
 
 func (s *ServiceVersionApi) ListServiceVersions(serviceId string) (http.Response, framework.ApiError) {
 	url := fmt.Sprintf("%s/v1/services/%v/versions", s.BaseURL, serviceId)
-	fmt.Println("Request URL " + url)
+	framework.Logger.Info(fmt.Sprintf("Request URL " + url))
 	resp, err := s.Client.HttpGet(url, s.AuthToken)
 
 	return *resp, err

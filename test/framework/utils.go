@@ -23,7 +23,7 @@ func ResponseBodyToString(response http.Response) string {
 
 	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		fmt.Printf("Error reading response body: %v\n", err)
+		Logger.Error(fmt.Sprintf("Error reading response body: %v\n", err))
 		return ""
 	}
 
@@ -69,7 +69,7 @@ func StructToReader[T any](s T) (io.Reader, error) {
 func GetConfiguration() config.Config {
 	configFile, err := os.Open("../../config.yml")
 	if err != nil {
-		fmt.Printf("Error opening config file: %v\n", err)
+		Logger.Info(fmt.Sprintf("Error opening config file: %v\n", err))
 		return config.Config{}
 	}
 	defer configFile.Close()
@@ -79,7 +79,7 @@ func GetConfiguration() config.Config {
 	decoder := yaml.NewDecoder(configFile)
 	err = decoder.Decode(&configuration)
 	if err != nil {
-		fmt.Printf("Error decoding YAML: %v\n", err)
+		Logger.Info(fmt.Sprintf("Error decoding YAML: %v\n", err))
 		return config.Config{}
 	}
 	return configuration

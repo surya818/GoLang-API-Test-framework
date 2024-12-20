@@ -28,7 +28,8 @@ In a nutshell, in Github actions, we setup the Service catalog server from the a
 <li>Install and Set up docker</li> 
 <li>Run the make docker-run command, which starts the server</li> 
 <li>Poll for the server startup</li> 
-<li>Install go-test-report for HTML reporting</li>  
+<li>Install go-test-report for HTML reporting</li> 
+<li> Set your PATH with export PATH=$PATH:$(go env GOPATH)/bin </li>
 <li>Run the tests</li> 
 <li>Upload HTML report artifact</li> 
 </ul>
@@ -40,9 +41,10 @@ In a nutshell, in Github actions, we setup the Service catalog server from the a
 2. Navigate to root directory of the repo </br>
 3. Run the command make docker-run to start the server
 4. Verify the server started on docker container and exposed on port 18080. Verify running curl or equivalent http://localhost:18080 for a 404 response
-6. For an easy to read HTML report , install the go library ==> ** go install github.com/vakenbolt/go-test-report@latest **
-6. Run ** go test -v -json ./... | go-test-report** </br>
-5. Verify Test results in test-report.html </br>
+5. For an easy to read HTML report , install the go library ==> ** go install github.com/vakenbolt/go-test-report@latest **
+6. Set your PATH with export PATH=$PATH:$(go env GOPATH)/bin
+7. Run **go test -v -json ./... | go-test-report** </br>
+8. Verify Test results in test-report.html </br>
 
  
 

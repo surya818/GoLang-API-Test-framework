@@ -11,7 +11,7 @@ This repository consists of Test Automation framework to testing APIs of the Ser
 
 **Prerequisites/Setup:**
 1. Go and Docker installed installed</br>
-2. gofumpt package
+2. gofumpt package (go install mvdan.cc/gofumpt@latest)
 
 **How to Run: 
 Approach 1: Created a github action** </br>
@@ -22,7 +22,7 @@ Approach 1: Created a github action** </br>
 In a nutshell, in Github actions, we setup the Service catalog server from the application make file, setup all dependacies and once the server is up and running, run the tests against the localhost server
 </br>Below is the detailed sequence of steps
 <ul type="square">
-<li>Install go and dependancies like gofumpt (go install mvdan.cc/gofumpt@latest) </li>  
+<li>Install go and dependancies like gofumpt </li>  
 <li>Install and Set up docker</li> 
 <li>Run the make docker-run command, which starts the server</li> 
 <li>Poll for the server startup</li> 

@@ -12,9 +12,10 @@ Docker</br>
 1. Go and Docker installed installed</br>
 2. gofumpt library instteled, which is a requirement for running the server in docker, via a make command 
 
-**How to Run: Created a github action** </br>
-
-**How to Run: (on Local Machine, Docker )** </br>
+**How to Run: 
+Approach 1: Created a github action** </br>
+![image](https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21)
+**Approach 2: (on Local Machine, Docker )** </br>
 (If you want to just run the tests locally, using Docker) </br>
 
 1. Clone this repo </br>
@@ -27,12 +28,19 @@ Docker</br>
 
  
 **What's happening behind the scenes of Github action:**
-The Dockerfile uses a openjdk base image, which has java pre-built. </br>
-There is a script called runtests.sh, which is the entrypoint for the Dockerfile. This script setsup an openjdk baseimage in the container and also fire the test execution using a gradle command </br> 
-Our docker run command has a -v option, which creates a volume, and this is how we copy the test result reports to the host machine.Also it uses your host KONG_API_KEY environment veiable and pass it to docker container by -e option, which is needed to authenticate the kong API calls
+In a nutshell, in Github actions, we setup the Service catalog server from the application make file, setup all dependacies and once the server is up and running, run the tests against the localhost server
+Below is the detailed sequence of steps
+<ul type="square">
+<li>Install go and dependancies like gofumpt</li>  
+<li>Install and Set up docker</li> 
+<li>Run the make docker-run command, which starts the server</li> 
+<li>Poll for the server startup</li> 
+<li>Install go-test-report for HTML reporting</li>  
+<li>Run the tests</li> 
+<li>Upload HTML report artifact</li> 
 
 
-**Main Packages used:**</br>
+**Main Packages used**:</br>
 net/http --> For http client</br>
 zap --> For logging</br>
 testing --> For tests and for the assertions within</br>
@@ -57,7 +65,7 @@ Nothing is hard coded. Utilized existing configuration for some of the tests, by
 Again, no test data is hard coded. Everything is neatly randomized, using code in utils
 
 
-<h3>**Test Details:**</h3>
+<h3>**Test Details**</h3>
 The tests focus on Kong Gateway functionality. In a nutshell tests deal with creation, modification, deletion of Control Planes, Services and routes. We have tests covering some of the CRUD operations that the rest api offers. And the tests are accpetance tests integrating flows accross different operations of Kong Gateway.
 The Test scenarios covered via Test Automation:
   

@@ -52,9 +52,9 @@ testing --> For tests and for the assertions within</br>
 
 </br>**Test Automation Architecture:**
 The Test automation code consists of 3 parts
-**1. Framework layer:** Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
-**2. Service Layer:** This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
-**3. Test Layer:** This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area
+</br>**1. Framework layer:** Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
+</br>**2. Service Layer:** This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
+</br>**3. Test Layer:** This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area
    
 </br><img src="https://github.com/user-attachments/assets/5bc5de67-d519-41cd-b998-4d39a8d69f0c" alt="Image Description" width="400" height="450">
 
@@ -70,8 +70,10 @@ Again, no test data is hard coded. Everything is neatly randomized, using code i
 **Logging:**
 Utmost care had been taken in logging everything concerning the api calls mode during the test. And majority of logging is written in the framework layer, which is reused accross Service and Test layer, reducing the number of log statements.
 
-**Code structure:**
-![image](https://github.com/user-attachments/assets/2843053c-d2eb-4d20-a181-073509acc33a)
+**Overall Code structure:**
+
+![image](https://github.com/user-attachments/assets/2d23de0f-64f6-423a-89e1-d6707e6658b8)
+
 
 
 <h3>Test Details</h3>

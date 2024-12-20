@@ -85,7 +85,7 @@ A common practice is to manually test the scenarios first and then plan the auto
 
 
 **Sample Test Reports:** </br>
-</br> Here's a snip of test report generated. Also added the sample report in test/sample-report/test-report.html just for showing the reporting capability
+</br> Here's a snip of test report generated. Also added the sample report in **test/sample-report** directory. The file name is **test-report.html** just for showing the reporting capability
 </br>
 ![image](https://github.com/user-attachments/assets/a4260dbc-85a3-4dab-9d36-a92894c4ae45)
 
@@ -98,6 +98,6 @@ Utmost care had been taken in logging everything concerning the api calls mode d
 
 
 </br> **Bug-report** 
-</br> A detailed bug report had been uploaded in the repository at repository roo, the file name is **BugReport.xlsx**
+</br> A detailed bug report had been uploaded in the repository at repository root directory, the file name is **BugReport.xlsx**
 
 # kong-takehometask

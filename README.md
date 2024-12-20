@@ -1,6 +1,6 @@
 # Candidate Take-Home Exercise - SDET
 # Kong Gateway API Tests 
-Welcome to the Technical solution for the Candidate take home task for SDET
+Welcome to the Technical solution for the Candidate take home task for SDET</br>
 This repository consists of Test Automation framework to testing APIs of the Service Catalog API developed in Go
 
 **Tech Stack:**</br>
@@ -38,19 +38,22 @@ zap --> For logging</br>
 testing --> For tests and for the assertions within</br>
 
 
-Test Automation Architecture:
+**Test Automation Architecture:**
 The Test automation code consists of 3 parts
 1. Framework layer: Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
 2. Service Layer: This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
-3. Test Layer: This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area 
+3. Test Layer: This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area
+   
+![image](https://github.com/user-attachments/assets/5bc5de67-d519-41cd-b998-4d39a8d69f0c)
 
-Utils:
+
+**Utils:**
 Consists of utility code that could be used within tests or even service layer code that abstracts api supporting code. E.g, Parsing Http Response to strings and Generic structs, tokenizing JWT tokens and templating request payloads
 
-Configuration:
+**Configuration:**
 Nothing is hard coded. Utilized existing configuration for some of the tests, by creating a Configuation object from the config.yml file. 
 
-Test Data:
+**Test Data:**
 Again, no test data is hard coded. Everything is neatly randomized, using code in utils
 
 
@@ -60,13 +63,16 @@ The Test scenarios covered via Test Automation:
   
 
 **Successful Github Actions Run:** </br>
-![image](https://github.com/user-attachments/assets/00d2eab9-7e08-4990-8aee-f5da5faa5736)
-
+![image](https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21)
 
 **Sample Test Reports:** </br>
+![image](https://github.com/user-attachments/assets/a4260dbc-85a3-4dab-9d36-a92894c4ae45)
+
 
 
 ****Sample Logging**:**</br>
+![image](https://github.com/user-attachments/assets/348b0d72-a29e-4952-928e-35b057c82941)
+
 
 
 

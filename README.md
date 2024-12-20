@@ -77,7 +77,10 @@ Again, no test data is hard coded. Everything is neatly randomized, using code i
 The tests focus on aspects of functionality, business logic, error handling and finding unexpected behaviour. One of the core ideas is to not only test the happy path functionality of APIs but also provide a high quality APIs by finding corner cases.
 A lot of test techniques like boundary value analysis, passing error input to find unexpected responses have been used in this effort. In addition to evaluating the API quality, documentation has also been considered while designing tests.
 A common practice is to manually test the scenarios first and then plan the automation tests for the scenarios, so we get a clear idea of what should the auto-tests contain.</br>
-</br> **Here's the exhaustive list of Test scenarios designed for this effort** </br>
+</br> 
+
+**Here's the exhaustive list of Test scenarios designed for this effort**
+</br>
 
 ![image](https://github.com/user-attachments/assets/724c154f-a7bb-4eca-b001-01a6d21c67b0)
 

@@ -18,6 +18,18 @@ Approach 1: Created a github action** </br>
 
 ![image](https://github.com/user-attachments/assets/ef69500e-4e4b-435a-8674-663a70d94c76)
 
+</br>**What's happening behind the scenes of Github action:**
+In a nutshell, in Github actions, we setup the Service catalog server from the application make file, setup all dependacies and once the server is up and running, run the tests against the localhost server
+</br>Below is the detailed sequence of steps
+<ul type="square">
+<li>Install go and dependancies like gofumpt</li>  
+<li>Install and Set up docker</li> 
+<li>Run the make docker-run command, which starts the server</li> 
+<li>Poll for the server startup</li> 
+<li>Install go-test-report for HTML reporting</li>  
+<li>Run the tests</li> 
+<li>Upload HTML report artifact</li> 
+</ul>
 
 </br>**Approach 2: (on Local Machine, Docker )** </br>
 (If you want to just run the tests locally, using Docker) </br>
@@ -31,19 +43,6 @@ Approach 1: Created a github action** </br>
 5. Verify Test results in test-report.html </br>
 
  
-**What's happening behind the scenes of Github action:**
-In a nutshell, in Github actions, we setup the Service catalog server from the application make file, setup all dependacies and once the server is up and running, run the tests against the localhost server
-</br>Below is the detailed sequence of steps
-<ul type="square">
-<li>Install go and dependancies like gofumpt</li>  
-<li>Install and Set up docker</li> 
-<li>Run the make docker-run command, which starts the server</li> 
-<li>Poll for the server startup</li> 
-<li>Install go-test-report for HTML reporting</li>  
-<li>Run the tests</li> 
-<li>Upload HTML report artifact</li> 
-</ul>
-
 
 </br>**Main Packages used**:</br>
 net/http --> For http client</br>
@@ -67,6 +66,12 @@ Nothing is hard coded. Utilized existing configuration for some of the tests, by
 
 **Test Data:**
 Again, no test data is hard coded. Everything is neatly randomized, using code in utils
+
+**Logging:**
+Utmost care had been taken in logging everything concerning the api calls mode during the test. And majority of logging is written in the framework layer, which is reused accross Service and Test layer, reducing the number of log statements.
+
+**Code structure:**
+![image](https://github.com/user-attachments/assets/2843053c-d2eb-4d20-a181-073509acc33a)
 
 
 <h3>Test Details</h3>

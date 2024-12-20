@@ -52,7 +52,7 @@ testing --> For tests and for the assertions within</br>
 
 </br>**Test Automation Architecture:**
 The Test automation code consists of 3 parts
-</br>**1. Framework layer:** Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
+</br>**1. Framework layer/Http Client layer:** Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
 </br>**2. Service Layer:** This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
 </br>**3. Test Layer:** This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area
    

@@ -49,9 +49,9 @@ testing --> For tests and for the assertions within</br>
 
 </br>**Test Automation Architecture:**
 The Test automation code consists of 3 parts
-1. Framework layer: Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
-2. Service Layer: This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
-3. Test Layer: This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area
+**1. Framework layer:** Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
+**2. Service Layer:** This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
+**3. Test Layer:** This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area
    
 </br><img src="https://github.com/user-attachments/assets/5bc5de67-d519-41cd-b998-4d39a8d69f0c" alt="Image Description" width="400" height="450">
 
@@ -65,9 +65,13 @@ Nothing is hard coded. Utilized existing configuration for some of the tests, by
 Again, no test data is hard coded. Everything is neatly randomized, using code in utils
 
 
-<h3>**Test Details**</h3>
-The tests focus on Kong Gateway functionality. In a nutshell tests deal with creation, modification, deletion of Control Planes, Services and routes. We have tests covering some of the CRUD operations that the rest api offers. And the tests are accpetance tests integrating flows accross different operations of Kong Gateway.
-The Test scenarios covered via Test Automation:
+<h3>Test Details</h3>
+The tests focus on aspects of functionality, business logic, error handling and finding unexpected behaviour. One of the core ideas is to not only test the happy path functionality of APIs but also provide a high quality APIs by finding corner cases.
+A lot of test techniques like boundary value analysis, passing error input to find unexpected responses have been used in this effort. In addition to evaluating the API quality, documentation has also been considered while designing tests.
+A common practice is to manually test the scenarios first and then plan the automation tests for the scenarios, so we get a clear idea of what should the auto-tests contain.</br>
+</br> Here's the exhaustive list of Test scenarios designed for this effort. 
+<br> ![image](https://github.com/user-attachments/assets/1b4f3fb4-e199-477c-9a92-622e1e854883)
+
   
 
 **Successful Github Actions Run:** </br>

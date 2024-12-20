@@ -71,8 +71,7 @@ The Test scenarios covered via Test Automation:
   
 
 **Successful Github Actions Run:** </br>
-![image](https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21)
-</br><img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="600" height="400">
+</br><img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="600" height="500">
 
 **Sample Test Reports:** </br>
 ![image](https://github.com/user-attachments/assets/a4260dbc-85a3-4dab-9d36-a92894c4ae45)

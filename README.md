@@ -14,7 +14,7 @@ Docker</br>
 
 **How to Run: 
 Approach 1: Created a github action** </br>
-<img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="900" height="600">
+</br><img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="900" height="600">
 
 </br>**Approach 2: (on Local Machine, Docker )** </br>
 (If you want to just run the tests locally, using Docker) </br>
@@ -53,8 +53,7 @@ The Test automation code consists of 3 parts
 2. Service Layer: This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.
 3. Test Layer: This layer has the actual tests, written utilizing the testing package. The Tests instantiates "apis" in the service layer and calls the methods which are the api calls within each area
    
-![image](https://github.com/user-attachments/assets/5bc5de67-d519-41cd-b998-4d39a8d69f0c)
-
+</br><img src="https://github.com/user-attachments/assets/5bc5de67-d519-41cd-b998-4d39a8d69f0c" alt="Image Description" width="400" height="45000">
 
 **Utils:**
 Consists of utility code that could be used within tests or even service layer code that abstracts api supporting code. E.g, Parsing Http Response to strings and Generic structs, tokenizing JWT tokens and templating request payloads

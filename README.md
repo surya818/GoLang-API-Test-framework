@@ -14,7 +14,7 @@ Docker</br>
 
 **How to Run: 
 Approach 1: Created a github action** </br>
-<img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="300" height="200">
+<img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="800" height="500">
 
 </br>**Approach 2: (on Local Machine, Docker )** </br>
 (If you want to just run the tests locally, using Docker) </br>

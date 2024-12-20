@@ -4,9 +4,10 @@ Welcome to the Technical solution for the Candidate take home task for SDET</br>
 This repository consists of Test Automation framework to testing APIs of the Service Catalog API developed in Go
 
 **Tech Stack:**</br>
-go</br>
-Docker</br>
-****</br>
+<ul type="square">
+<li>go</li>  
+<li>Docker</li> 
+</ul>
 
 **Prerequisites/Setup:**
 1. Go and Docker installed installed</br>
@@ -30,7 +31,7 @@ Approach 1: Created a github action** </br>
  
 **What's happening behind the scenes of Github action:**
 In a nutshell, in Github actions, we setup the Service catalog server from the application make file, setup all dependacies and once the server is up and running, run the tests against the localhost server
-Below is the detailed sequence of steps
+</br>Below is the detailed sequence of steps
 <ul type="square">
 <li>Install go and dependancies like gofumpt</li>  
 <li>Install and Set up docker</li> 
@@ -39,6 +40,7 @@ Below is the detailed sequence of steps
 <li>Install go-test-report for HTML reporting</li>  
 <li>Run the tests</li> 
 <li>Upload HTML report artifact</li> 
+</ul>
 
 
 </br>**Main Packages used**:</br>

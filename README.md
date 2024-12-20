@@ -14,8 +14,9 @@ Docker</br>
 
 **How to Run: 
 Approach 1: Created a github action** </br>
-![image](https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21)
-**Approach 2: (on Local Machine, Docker )** </br>
+<img src="https://github.com/user-attachments/assets/3f376401-2cd2-4084-a5d3-977510f97d21" alt="Image Description" width="300" height="200">
+
+</br>**Approach 2: (on Local Machine, Docker )** </br>
 (If you want to just run the tests locally, using Docker) </br>
 
 1. Clone this repo </br>
@@ -40,13 +41,13 @@ Below is the detailed sequence of steps
 <li>Upload HTML report artifact</li> 
 
 
-**Main Packages used**:</br>
+</br>**Main Packages used**:</br>
 net/http --> For http client</br>
 zap --> For logging</br>
 testing --> For tests and for the assertions within</br>
 
 
-**Test Automation Architecture:**
+</br>**Test Automation Architecture:**
 The Test automation code consists of 3 parts
 1. Framework layer: Which builds a re-usable http-client and has functionality for invocation of the HTTP Methods. This part of code is API agnostic and has no coupling or any relation with the Service Catalog API.
 2. Service Layer: This layer hosts the code that is specific to the APIs of our Service Catalog. A seperate go file is created for each API (like Service API, Service Version API, Token API). The methods inside these files contain the actual APIs invocation within each API of Service catalog.

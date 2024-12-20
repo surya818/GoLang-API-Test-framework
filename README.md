@@ -12,6 +12,8 @@ This repository consists of Test Automation framework to testing APIs of the Ser
 **Prerequisites/Setup:**
 1. Go and Docker installed installed</br>
 2. gofumpt package (go install mvdan.cc/gofumpt@latest)
+3. Make sure GOPATH/bin is accessible in PATH ==> **export PATH=$PATH:$(go env GOPATH)/bin**
+
 
 **How to Run: 
 Approach 1: Created a github action** </br>

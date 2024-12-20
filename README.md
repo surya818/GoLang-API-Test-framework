@@ -98,6 +98,6 @@ Utmost care had been taken in logging everything concerning the api calls mode d
 
 
 </br> **Bug-report** 
-</br> A detailed bug report had been uploaded in the repository at 
+</br> A detailed bug report had been uploaded in the repository at repository roo, the file name is **BugReport.xlsx**
 
 # kong-takehometask

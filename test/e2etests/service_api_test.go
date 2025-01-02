@@ -2,6 +2,7 @@ package e2etests
 
 import (
 	"testing"
+	"time"
 
 	"github.com/kong/candidate-take-home-exercise-sdet/test/framework"
 	"github.com/kong/candidate-take-home-exercise-sdet/test/models"
@@ -22,7 +23,7 @@ func TestServiceApi_CreateAndGetService(t *testing.T) {
 	assert.NotEqual(t, serviceName, service_object.Item.ID)
 	//Verify Service name is same as we pass in the response
 	assert.Equal(t, serviceName, service_object.Item.Name)
-	assert.Empty(t, service_object.Item.CreatedAt)
+	assert.NotEmpty(t, service_object.Item.CreatedAt)
 	serviceId := service_object.Item.ID
 	assert.NotNil(t, serviceId)
 
@@ -64,7 +65,7 @@ func TestServiceApi_CreateServiceAndVerifyListServices(t *testing.T) {
 	assert.NotEqual(t, serviceName, service_object.Item.ID)
 	//Verify Service name is same as we pass in the response
 	assert.Equal(t, serviceName, service_object.Item.Name)
-	assert.Empty(t, service_object.Item.CreatedAt)
+	assert.NotEmpty(t, service_object.Item.CreatedAt)
 	serviceId := service_object.Item.ID
 	assert.NotNil(t, serviceId)
 
@@ -208,6 +209,7 @@ func TestServiceApi_UpdateService(t *testing.T) {
 	updated_time := service_object.Item.UpdatedAt
 
 	//Patch Service by Id
+	time.Sleep(1 * time.Second)
 	updatedserviceName := "updated-" + serviceName
 	updatedDescription := "Updated decription"
 	patchPayload := models.Service{Name: updatedserviceName, Description: updatedDescription}

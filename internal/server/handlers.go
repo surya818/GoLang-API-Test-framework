@@ -268,10 +268,20 @@ func (h *Handler) CreateServiceHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	row := h.db.QueryRow("SELECT id, name, description, created_at, updated_at FROM services WHERE id = ?", newService.ID)
+
+	var service Service
+	err = row.Scan(&service.ID, &service.Name, &service.Description, &service.CreatedAt, &service.UpdatedAt)
+	if err != nil {
+		h.logger.Error("failed to fetch inserted service", zap.Error(err))
+		http.Error(w, `{"error": "Internal server error"}`, http.StatusInternalServerError)
+		return
+	}
+
 	// Set the response status to 201 Created and encode the new service as JSON.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(map[string]interface{}{"item": newService})
+	err = json.NewEncoder(w).Encode(map[string]interface{}{"item": service})
 	if err != nil {
 		h.logger.Error("unable to encode response", zap.Error(err))
 	}
@@ -370,8 +380,24 @@ func (h *Handler) UpdateServiceHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	updateFields := []string{}
+	values := []interface{}{}
+
+	if updatedService.Name.Valid && strings.TrimSpace(updatedService.Name.String) != "" {
+		updateFields = append(updateFields, "name = ?")
+		values = append(values, updatedService.Name.String)
+	}
+
+	if strings.TrimSpace(updatedService.Description) != "" {
+		updateFields = append(updateFields, "description = ?")
+		values = append(values, updatedService.Description)
+	}
+	updateFields = append(updateFields, "updated_at = CURRENT_TIMESTAMP")
+	values = append(values, serviceID)
+	query := fmt.Sprintf("UPDATE services SET %s WHERE id = ?", strings.Join(updateFields, ", "))
+
 	// Prepare an SQL statement to update the service.
-	stmt, err := h.db.Prepare("UPDATE services SET updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+	stmt, err := h.db.Prepare(query)
 	if err != nil {
 		h.logger.Error("failed to prepare update statement", zap.Error(err))
 		http.Error(w, `{"error": "Internal server error"}`, http.StatusInternalServerError)
@@ -380,7 +406,7 @@ func (h *Handler) UpdateServiceHandler(w http.ResponseWriter, r *http.Request) {
 	defer stmt.Close()
 
 	// Execute the SQL statement with the updated service details.
-	_, err = stmt.Exec(serviceID)
+	_, err = stmt.Exec(values...)
 	if err != nil {
 		h.logger.Error("failed to update service", zap.Error(err))
 		http.Error(w, `{"error": "Internal server error"}`, http.StatusInternalServerError)
@@ -401,10 +427,10 @@ func (h *Handler) UpdateServiceHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error": "Internal server error"}`, http.StatusInternalServerError)
 		return
 	}
-	if !updatedService.Name.Valid {
+	if len(strings.TrimSpace(updatedService.Name.String)) == 0 {
 		updatedService.Name = name
 	}
-	if len(updatedService.Description) == 0 {
+	if len(strings.TrimSpace(updatedService.Description)) == 0 {
 		updatedService.Description = description
 	}
 

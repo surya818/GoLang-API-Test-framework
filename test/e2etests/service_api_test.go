@@ -10,7 +10,7 @@ import (
 )
 
 /*
-This test creates a new service and verifies that Get servic returns the correct service
+This test creates a new service and verifies that Get service returns the correct service
 POST v1/services
 GET v1/services/{serviceId}
 */
@@ -39,9 +39,8 @@ func TestServiceApi_CreateAndGetService(t *testing.T) {
 
 /*
 Bug Behaviour
-This test creates a new service and verifies that Get servic returns the correct service
+This test creates a new service and verifies that response has the correct timestamps for created and updated
 POST v1/services
-GET v1/services/{serviceId}
 */
 func TestServiceApi_CreateAndVerifyTimestamps(t *testing.T) {
 
@@ -125,7 +124,7 @@ func TestServiceApi_GetServiceWithEmptyId(t *testing.T) {
 /*
 Delete the service and
 1. Verify the delete api response
-2. Verify empty response
+2. Verify empty response body
 3. List Services and verify the count decremented with the deleted item
 4. Get Deleted Service and verify empty response
 */

@@ -506,6 +506,13 @@ func (h *Handler) CreateServiceVersionHandler(w http.ResponseWriter, r *http.Req
 	}
 	newVersion.ID = id.String()
 	newVersion.ServiceID = serviceID
+	version := newVersion.Version
+
+	if len(version) > 16 {
+		h.logger.Error("invalid request payload", zap.Error(err))
+		http.Error(w, `{"error": "Version cannot be longer than 16 characters "}`, http.StatusBadRequest)
+		return
+	}
 
 	// Prepare an SQL statement to insert the new version.
 	//nolint:lll
@@ -636,7 +643,12 @@ func (h *Handler) UpdateServiceVersionHandler(w http.ResponseWriter, r *http.Req
 		http.Error(w, `{"error": "Invalid request payload"}`, http.StatusBadRequest)
 		return
 	}
-
+	version := updatedVersion.Version
+	if len(version) > 16 {
+		h.logger.Error("Invalid request payload")
+		http.Error(w, `{"error": "Version cannot be longer than 16 characters "}`, http.StatusBadRequest)
+		return
+	}
 	// Prepare an SQL statement to update the service version.
 	//nolint:lll
 	stmt, err := h.db.Prepare("UPDATE service_versions SET ID = ?, version = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND service_id = ?")

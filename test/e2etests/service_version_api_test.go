@@ -24,7 +24,7 @@ func TestServiceVersionApi_CreateAndGetServiceVersion(t *testing.T) {
 	//Commenting this because of the bug
 	//assert.NotEmpty(t, serviceVersion.Item.CreatedAt)
 
-	//Get Service version by Id and check the same verifications
+	//Get Service version by Id and check the same the data is same as Create Service version
 	get_resp, _ := ServiceVersionApi.GetServiceVersion(serviceVersion.Item.ServiceID, versionId)
 	get_service_version_object := extractServiceVersionResponse(get_resp)
 	assert.Equal(t, 200, get_resp.StatusCode)
@@ -37,17 +37,13 @@ func TestServiceVersionApi_CreateAndGetServiceVersion(t *testing.T) {
 /*
 This test creates a new service version and verifies that List service versions returns the correct service version
 POST v1/services/{serviceId}/versions
-GET v1/services/{serviceId}/versions/{versionId}
+GET v1/services/{serviceId}/versions
 */
 func TestServiceVersionApi_CreateAndListServiceVersions(t *testing.T) {
 
 	serviceVersion := CreateServiceVersion_Success()
-	versionId := serviceVersion.Item.ID
-	//validate VersionId is not what we pass in the request, but an auto-gen GUID
-	assert.False(t, strings.Contains(versionId, "id-"))
-	assert.True(t, strings.Contains(serviceVersion.Item.Version, "v"))
 
-	//Get Service version by Id and check the same verifications
+	//List Service version by Id and check the same verifications
 	get_resp, _ := ServiceVersionApi.ListServiceVersions(serviceVersion.Item.ServiceID)
 	get_service_version_object := extractListServiceVersionsResponse(get_resp)
 	assert.Equal(t, 200, get_resp.StatusCode)
@@ -73,7 +69,7 @@ func TestServiceVersionApi_CreateServiceVersions_VerifyTimestamps(t *testing.T) 
 Create Service with 17 character version string
 The API should give a http 400 family error, ideally a Bad Request
 */
-func TestServiceVersionApi_CreateServiceVersion_Fails_With17Chars_VersionString(t *testing.T) {
+func TestServiceVersionApi_CreateServiceVersion_Fails_WithMoreThan17Chars_VersionString(t *testing.T) {
 
 	service_object := CreateService_Success()
 	serviceId := service_object.Item.ID
@@ -244,6 +240,36 @@ func TestServiceVersionApi_DeleteServiceVersion_VerifyListServiceVersionSize(t *
 }
 
 /*
+Delete the service  and verify that the linked service versions remains unaffected
+1. Create Service and service version
+2. Verify GET service versions is successful
+3. Delete Service
+
+There is no impact on service version with the service deleted
+*/
+func TestServiceVersionApi_DeleteService_VerifyListServiceVersion(t *testing.T) {
+
+	serviceVersion := CreateServiceVersion_Success()
+	serviceId := serviceVersion.Item.ServiceID
+
+	//Get Service version by Id and check the same verifications
+	serviceVersions := listServiceVersionsAndExtractTheList(serviceId)
+	serviceCountBeforeDelete := len(serviceVersions.Items)
+
+	//Delete Service by Id and check the object is deleted completely
+
+	delete_response, _ := ServiceApi.DeleteService(serviceId)
+	assert.Equal(t, 204, delete_response.StatusCode)
+	assert.True(t, delete_response.ContentLength == 0)
+
+	//Get Service by Id and check the same verifications
+	serviceVersions = listServiceVersionsAndExtractTheList(serviceId)
+	serviceCountAfterDelete := len(serviceVersions.Items)
+	assert.True(t, serviceCountAfterDelete != serviceCountBeforeDelete, "Service versions accessible even when the linked Service is deleted")
+
+}
+
+/*
 Delete the service version and
 1. Verify the delete api response
 2. Verify empty response
@@ -304,11 +330,14 @@ func TestServiceVersionApi_DeleteServiceVersion_InvalidServiceIdAndVersionId(t *
 
 /*
 ***Bug Behaviour: The patched versionId gets deleted and a new versionId is created for the change
-This test creates a new service version and verifies that Get service version returns the correct service version
-POST v1/services/{serviceId}/versions
-GET v1/services/{serviceId}/versions/{versionId}
+
+1. Create SErvice and Service version
+2. List Service versions successfully with the versionId
+3. Update the service version
+4. Verify that the versionId we got in step 1 no longer exists. Instead a new versionId is created with the PATCH
+5. ALso, GET service-version will return a 404 service version not found since the version id was changed
 */
-func TestServiceVersionApi_UpdateServiceVersionAndVerifyTheChanges(t *testing.T) {
+func TestServiceVersionApi_UpdateServiceVersion_VersionIdIsChanged(t *testing.T) {
 
 	serviceVersion := CreateServiceVersion_Success()
 	versionId := serviceVersion.Item.ID
@@ -325,7 +354,7 @@ func TestServiceVersionApi_UpdateServiceVersionAndVerifyTheChanges(t *testing.T)
 	updated_time_after_update := updated_response_body.Item.UpdatedAt
 	assert.Equal(t, updatedVersion, updated_response_body.Item.Version)
 
-	//Call GET /services/{serviceId}/version/{versionId} to see we get an empty response
+	//Call GET /services/{serviceId}/version/{versionId} to see we the original version is deleted and we see empty response
 	get_resp, _ := ServiceVersionApi.GetServiceVersion(serviceId, versionId)
 	service_version_object := extractServiceVersionResponse(get_resp)
 	assert.Equal(t, updatedVersion, service_version_object.Item.Version)
@@ -360,10 +389,10 @@ func TestServiceVersionApi_UpdateServiceVersionAndVerifyTimestamps(t *testing.T)
 }
 
 /*
-***Bug Behaviour: The patched versionId gets deleted and a new versionId is created for the change
-This test creates a new service version and verifies that Get service version returns the correct service version
-POST v1/services/{serviceId}/versions
-GET v1/services/{serviceId}/versions/{versionId}
+***Bug Behaviour: Patch Service version returns Http 500 with version length greater than 16
+PATCH v1/services/{serviceId}/versions/{versionId}
+We return an http 500 error for version id > 16 characters in PATCH service version API
+This 500 error should be handled
 */
 func TestServiceVersionApi_UpdateServiceVersion_Version_MoreThan16Chars(t *testing.T) {
 
@@ -376,6 +405,8 @@ func TestServiceVersionApi_UpdateServiceVersion_Version_MoreThan16Chars(t *testi
 	patchPayload := models.ServiceVersion{Version: updatedVersion}
 	update_response, _ := ServiceVersionApi.UpdateServiceVersion(serviceId, versionId, patchPayload)
 	assert.NotEqual(t, 500, update_response.StatusCode)
+	assert.Equal(t, 400, update_response.StatusCode)
+
 }
 
 /*
@@ -387,14 +418,15 @@ func TestServiceVersionApi_UpdateServiceVersion_Fails_With_EmptyServiceId_InURL(
 	versionId := serviceVersion.Item.ID
 
 	//Patch Service by Id
-	updatedVersion := framework.RandomString(17)
+	updatedVersion := framework.RandomString(15)
 	patchPayload := models.ServiceVersion{Version: updatedVersion}
+	//Update the service version by passing empty service ID
 	update_response, _ := ServiceVersionApi.UpdateServiceVersion("", versionId, patchPayload)
 	assert.Equal(t, 404, update_response.StatusCode)
 }
 
 /*
-Update Service version fails with empty ServiceId URL Parameter
+Update Service version fails with Invalid/Non-existent ServiceId URL Parameter
 */
 func TestServiceVersionApi_UpdateServiceVersion_Fails_With_InvalidServiceId_InURL(t *testing.T) {
 
@@ -403,8 +435,11 @@ func TestServiceVersionApi_UpdateServiceVersion_Fails_With_InvalidServiceId_InUR
 
 	//Patch Service by Id
 	invalidServiceId := framework.RandomString(10)
-	updatedVersion := framework.RandomString(17)
+	updatedVersion := framework.RandomString(10)
 	patchPayload := models.ServiceVersion{Version: updatedVersion}
+
+	//Update the service version by passing invalid/non-existent service ID
+
 	update_response, _ := ServiceVersionApi.UpdateServiceVersion(invalidServiceId, versionId, patchPayload)
 	assert.Equal(t, 404, update_response.StatusCode)
 	error_resp := extractErrorResponse(update_response)
@@ -412,7 +447,7 @@ func TestServiceVersionApi_UpdateServiceVersion_Fails_With_InvalidServiceId_InUR
 }
 
 /*
-Update Service version fails with empty ServiceId URL Parameter
+Update Service version fails with  invalid/non-existent service version ID URL Parameter
 */
 func TestServiceVersionApi_UpdateServiceVersion_Fails_With_InvalidVersionID_InURL(t *testing.T) {
 
@@ -420,8 +455,11 @@ func TestServiceVersionApi_UpdateServiceVersion_Fails_With_InvalidVersionID_InUR
 
 	//Patch Service by Id
 	invalidVersionId := framework.RandomString(10)
-	updatedVersion := framework.RandomString(17)
+	updatedVersion := framework.RandomString(10)
 	patchPayload := models.ServiceVersion{Version: updatedVersion}
+
+	//Update the service version by passing invalid/non-existent service version ID
+
 	update_response, _ := ServiceVersionApi.UpdateServiceVersion(serviceVersion.Item.ServiceID, invalidVersionId, patchPayload)
 	assert.Equal(t, 404, update_response.StatusCode)
 	error_resp := extractErrorResponse(update_response)
